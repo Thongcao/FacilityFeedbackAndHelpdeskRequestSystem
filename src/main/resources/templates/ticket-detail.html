@@ -33,8 +33,17 @@
             align-items: center;
         }
 
+        .header-brand {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: 0.5px;
+        }
+
         .header h1 {
-            font-size: 24px;
+            font-size: 18px;
+            font-weight: 500;
+            opacity: 0.95;
         }
 
         .header a {
@@ -190,9 +199,12 @@
 <body>
     <div class="header">
         <div class="header-content">
-            <h1>Facility Helpdesk System</h1>
+            <div>
+                <div class="header-brand">FPT University</div>
+                <h1>Facility Helpdesk System</h1>
+            </div>
             <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" style="background: transparent; border: 1px solid white; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px;">Logout</button>
+                <button type="submit" style="background: transparent; border: 1px solid white; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; transition: background-color 0.3s;">Logout</button>
             </form>
         </div>
     </div>
