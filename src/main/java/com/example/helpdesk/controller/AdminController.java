@@ -2,6 +2,7 @@ package com.example.helpdesk.controller;
 
 import com.example.helpdesk.entity.Ticket;
 import com.example.helpdesk.entity.User;
+import com.example.helpdesk.service.ExcelImportService;
 import com.example.helpdesk.service.TicketService;
 import com.example.helpdesk.service.UserService;
 import org.slf4j.Logger;
@@ -16,8 +17,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
@@ -34,10 +38,12 @@ public class AdminController {
 
     private final TicketService ticketService;
     private final UserService userService;
+    private final ExcelImportService excelImportService;
 
-    public AdminController(TicketService ticketService, UserService userService) {
+    public AdminController(TicketService ticketService, UserService userService, ExcelImportService excelImportService) {
         this.ticketService = ticketService;
         this.userService = userService;
+        this.excelImportService = excelImportService;
     }
 
     /**
@@ -272,6 +278,99 @@ public class AdminController {
         }
 
         return "redirect:/admin/users";
+    }
+
+    /**
+     * Import users from Excel file (ADMIN ONLY).
+     * 
+     * @param file the Excel file to import
+     * @param redirectAttributes attributes for redirect
+     * @return redirect URL
+     */
+    @PostMapping("/users/import")
+    @PreAuthorize("hasRole('ADMIN')")
+    public String importUsersFromExcel(
+            @RequestParam("file") MultipartFile file,
+            RedirectAttributes redirectAttributes) {
+        
+        logger.info("Importing users from Excel file: {} (ADMIN ONLY)", file.getOriginalFilename());
+
+        // Validate file
+        if (file.isEmpty()) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Please select a file to upload");
+            return "redirect:/admin/users";
+        }
+
+        // Validate file extension
+        String filename = file.getOriginalFilename();
+        if (filename == null || (!filename.endsWith(".xlsx") && !filename.endsWith(".xls"))) {
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Invalid file format. Please upload an Excel file (.xlsx or .xls)");
+            return "redirect:/admin/users";
+        }
+
+        try {
+            ExcelImportService.ImportResult result = excelImportService.importUsersFromExcel(file);
+            
+            if (result.getSuccessCount() > 0) {
+                redirectAttributes.addFlashAttribute("successMessage", 
+                        String.format("Successfully imported %d user(s)", result.getSuccessCount()));
+            }
+            
+            if (result.getFailedCount() > 0) {
+                StringBuilder errorMsg = new StringBuilder();
+                errorMsg.append(String.format("Failed to import %d user(s). ", result.getFailedCount()));
+                
+                // Show first 10 errors
+                List<String> errors = result.getErrors();
+                int errorCount = Math.min(10, errors.size());
+                for (int i = 0; i < errorCount; i++) {
+                    errorMsg.append(errors.get(i));
+                    if (i < errorCount - 1) {
+                        errorMsg.append("; ");
+                    }
+                }
+                
+                if (errors.size() > 10) {
+                    errorMsg.append(String.format(" ... and %d more error(s)", errors.size() - 10));
+                }
+                
+                redirectAttributes.addFlashAttribute("errorMessage", errorMsg.toString());
+            }
+
+            // Store all errors in session for detailed view (optional)
+            if (!result.getErrors().isEmpty()) {
+                redirectAttributes.addFlashAttribute("importErrors", result.getErrors());
+            }
+
+        } catch (Exception e) {
+            logger.error("Error importing users from Excel: {}", e.getMessage(), e);
+            redirectAttributes.addFlashAttribute("errorMessage", 
+                    "Error importing users: " + e.getMessage());
+        }
+
+        return "redirect:/admin/users";
+    }
+
+    /**
+     * Download Excel template file (ADMIN ONLY).
+     * 
+     * @param response the HTTP response
+     * @throws IOException if error generating file
+     */
+    @GetMapping("/users/import/template")
+    @PreAuthorize("hasRole('ADMIN')")
+    public void downloadExcelTemplate(HttpServletResponse response) throws IOException {
+        logger.info("Downloading Excel template (ADMIN ONLY)");
+
+        byte[] excelBytes = excelImportService.generateExcelTemplate();
+
+        response.setContentType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+        response.setHeader("Content-Disposition", "attachment; filename=user_import_template.xlsx");
+        response.setContentLength(excelBytes.length);
+
+        response.getOutputStream().write(excelBytes);
+        response.getOutputStream().flush();
     }
 }
 

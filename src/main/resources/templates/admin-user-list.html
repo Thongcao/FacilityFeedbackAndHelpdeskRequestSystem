@@ -193,6 +193,52 @@
             <a th:href="@{/admin/dashboard}">← Back to Dashboard</a>
         </div>
 
+        <!-- Import Excel Card -->
+        <div class="card" style="margin-bottom: 30px;">
+            <h2>Import Users from Excel</h2>
+            <p style="color: #666; margin-bottom: 20px;">
+                Upload an Excel file (.xlsx) to import multiple users at once. 
+                Required columns: <strong>Email</strong>, <strong>Password</strong>, <strong>Full Name</strong>, <strong>Role</strong> (STUDENT/STAFF/ADMIN).
+                Optional columns: <strong>Student Code</strong>, <strong>Class Name</strong> (for STUDENT), <strong>Position</strong>, <strong>Department Name</strong> (for STAFF).
+            </p>
+            
+            <div style="margin-bottom: 15px;">
+                <a th:href="@{/admin/users/import/template}" 
+                   class="btn" 
+                   style="background-color: #28a745; margin-right: 10px; text-decoration: none; display: inline-block;">
+                    📥 Download Excel Template
+                </a>
+                <span style="color: #666; font-size: 13px;">
+                    Download template file with sample data to get started
+                </span>
+            </div>
+            
+            <form th:action="@{/admin/users/import}" method="post" enctype="multipart/form-data" style="display: flex; align-items: center; gap: 15px;">
+                <input type="file" name="file" accept=".xlsx,.xls" required 
+                       style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; flex: 1; max-width: 400px;">
+                <button type="submit" class="btn" style="padding: 8px 20px;">
+                    Import Excel
+                </button>
+            </form>
+            
+            <div style="margin-top: 15px; padding: 10px; background-color: #f8f9fa; border-radius: 4px; font-size: 13px; color: #666;">
+                <strong>Note:</strong> The first row should contain column headers. 
+                Email addresses must be unique. Existing emails will be skipped.
+            </div>
+        </div>
+
+        <!-- Success/Error Messages -->
+        <div th:if="${successMessage}" 
+             style="background-color: #d4edda; color: #155724; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #c3e6cb;">
+            <strong>Success:</strong> <span th:text="${successMessage}"></span>
+        </div>
+        
+        <div th:if="${errorMessage}" 
+             style="background-color: #f8d7da; color: #721c24; padding: 12px; border-radius: 4px; margin-bottom: 20px; border: 1px solid #f5c6cb;">
+            <strong>Error:</strong> <span th:text="${errorMessage}"></span>
+        </div>
+
+        <!-- Users List Card -->
         <div class="card">
             <h2>All Users</h2>
 
