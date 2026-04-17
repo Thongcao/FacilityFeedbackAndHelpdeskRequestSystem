@@ -73,7 +73,7 @@
                     <div th:if="${#fields.hasErrors('description')}" class="error-message" th:errors="*{description}"></div>
                     <!-- AI Suggest Button -->
                     <div style="margin-top:8px;">
-                        <button type="button" class="btn-ai" onclick="getAiSuggestions()">🤖 AI Auto-Suggest Category & Priority</button>
+                        <button type="button" class="btn-ai" onclick="getAiSuggestions()">AI Auto-Suggest Category & Priority</button>
                     </div>
                     <div id="aiLoading" class="ai-loading"><span class="spinner-inline"></span>AI is analyzing your ticket...</div>
                 </div>
@@ -87,7 +87,7 @@
                         <option value="URGENT">Urgent</option>
                     </select>
                     <div id="aiPrioritySuggestion" class="ai-suggestion">
-                        <span class="ai-label">🤖 AI suggests:</span>
+                        <span class="ai-label">AI suggests:</span>
                         <span id="aiPriorityValue"></span>
                         <button type="button" onclick="applyPriority()">Apply</button>
                     </div>
@@ -100,7 +100,7 @@
                         <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Category</option>
                     </select>
                     <div id="aiCategorySuggestion" class="ai-suggestion">
-                        <span class="ai-label">🤖 AI suggests:</span>
+                        <span class="ai-label">AI suggests:</span>
                         <span id="aiCategoryValue"></span>
                         <button type="button" onclick="applyCategory()">Apply</button>
                     </div>

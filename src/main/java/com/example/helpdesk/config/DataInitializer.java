@@ -53,10 +53,28 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) {
         logger.info("Initializing sample data...");
         createUsers();
+        upgradePasswords(); // Upgrade any plaintext passwords to BCrypt
         Department itDept = createDepartments();
         createRooms(itDept);
         createCategories();
         logger.info("Data initialization completed");
+    }
+
+    private void upgradePasswords() {
+        java.util.List<User> users = userRepository.findAll();
+        int upgradedCount = 0;
+        for (User user : users) {
+            // Check if password is NOT a BCrypt hash (BCrypt hashes start with $2a$ or $2b$)
+            if (user.getPassword() != null && !user.getPassword().startsWith("$2a$")) {
+                logger.info("Upgrading plaintext password to BCrypt for user: {}", user.getEmail());
+                user.setPassword(passwordEncoder.encode(user.getPassword()));
+                userRepository.save(user);
+                upgradedCount++;
+            }
+        }
+        if (upgradedCount > 0) {
+            logger.info("Upgraded {} plaintext passwords to BCrypt.", upgradedCount);
+        }
     }
 
     private void createUsers() {

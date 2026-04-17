@@ -112,7 +112,7 @@
                     <div>
                         <span class="comment-author" th:text="${c.author.fullName}">User</span>
                         <span class="role-badge" th:classappend="'role-' + ${c.author.role}" th:text="${c.author.role}">ROLE</span>
-                        <span th:if="${c.aiGenerated}" class="ai-badge">🤖 AI</span>
+                        <span th:if="${c.aiGenerated}" class="ai-badge">AI</span>
                     </div>
                     <span class="comment-time" th:text="${#temporals.format(c.createdAt, 'dd/MM/yyyy HH:mm')}">Time</span>
                 </div>
@@ -124,7 +124,7 @@
                 <div style="margin-bottom:12px;">
                     <textarea name="content" placeholder="Add more information or reply..." required></textarea>
                 </div>
-                <button type="submit" class="btn">💬 Send Reply</button>
+                <button type="submit" class="btn">Send Reply</button>
             </form>
         </div>
 

@@ -157,7 +157,7 @@
                     <div>
                         <span class="comment-author" th:text="${c.author.fullName}">User</span>
                         <span class="role-badge" th:classappend="'role-' + ${c.author.role}" th:text="${c.author.role}">ROLE</span>
-                        <span th:if="${c.aiGenerated}" class="ai-badge">🤖 AI Generated</span>
+                        <span th:if="${c.aiGenerated}" class="ai-badge">AI Generated</span>
                     </div>
                     <span class="comment-time" th:text="${#temporals.format(c.createdAt, 'dd/MM/yyyy HH:mm')}">Time</span>
                 </div>
@@ -166,7 +166,7 @@
 
             <!-- AI Suggest Reply -->
             <div th:if="${aiAvailable}" style="margin-bottom:16px;">
-                <button type="button" class="btn btn-ai btn-sm" onclick="suggestReply()">🤖 AI Suggest Reply</button>
+                <button type="button" class="btn btn-ai btn-sm" onclick="suggestReply()">AI Suggest Reply</button>
                 <div id="aiLoading" class="ai-loading"><div class="spinner"></div>AI is thinking...</div>
             </div>
 
@@ -175,7 +175,7 @@
                 <div style="margin-bottom:12px;">
                     <textarea id="commentContent" name="content" placeholder="Write your reply here..." required></textarea>
                 </div>
-                <button type="submit" class="btn">💬 Post Reply</button>
+                <button type="submit" class="btn">Post Reply</button>
             </form>
         </div>
     </div>
