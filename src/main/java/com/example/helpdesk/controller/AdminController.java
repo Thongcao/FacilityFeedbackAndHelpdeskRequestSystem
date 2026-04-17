@@ -1,7 +1,10 @@
 package com.example.helpdesk.controller;
 
+import com.example.helpdesk.entity.Comment;
 import com.example.helpdesk.entity.Ticket;
 import com.example.helpdesk.entity.User;
+import com.example.helpdesk.service.AiService;
+import com.example.helpdesk.service.CommentService;
 import com.example.helpdesk.service.ExcelImportService;
 import com.example.helpdesk.service.TicketService;
 import com.example.helpdesk.service.UserService;
@@ -24,6 +27,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Controller for admin/staff dashboard and management pages.
@@ -39,11 +43,17 @@ public class AdminController {
     private final TicketService ticketService;
     private final UserService userService;
     private final ExcelImportService excelImportService;
+    private final CommentService commentService;
+    private final AiService aiService;
 
-    public AdminController(TicketService ticketService, UserService userService, ExcelImportService excelImportService) {
+    public AdminController(TicketService ticketService, UserService userService,
+                           ExcelImportService excelImportService, CommentService commentService,
+                           AiService aiService) {
         this.ticketService = ticketService;
         this.userService = userService;
         this.excelImportService = excelImportService;
+        this.commentService = commentService;
+        this.aiService = aiService;
     }
 
     /**
@@ -115,9 +125,54 @@ public class AdminController {
         logger.info("Displaying ticket detail for ID: {}", id);
 
         Ticket ticket = ticketService.getTicketById(id);
+        List<Comment> comments = commentService.getCommentsByTicket(id);
+
+        // Get staff list for assignment dropdown
+        List<User> staffList = userService.getAllUsers().stream()
+                .filter(u -> "STAFF".equals(u.getRole()) || "ADMIN".equals(u.getRole()))
+                .collect(Collectors.toList());
+
         model.addAttribute("ticket", ticket);
+        model.addAttribute("comments", comments);
+        model.addAttribute("staffList", staffList);
+        model.addAttribute("aiAvailable", aiService.isAvailable());
 
         return "admin-ticket-detail";
+    }
+
+    /**
+     * Add comment to ticket.
+     */
+    @PostMapping("/tickets/{id}/comment")
+    public String addComment(@PathVariable Long id,
+                            @RequestParam String content,
+                            Authentication authentication,
+                            RedirectAttributes redirectAttributes) {
+        logger.info("Adding comment to ticket {} by {}", id, authentication.getName());
+        try {
+            commentService.addComment(id, content, authentication.getName());
+            redirectAttributes.addFlashAttribute("successMessage", "Comment added successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/admin/tickets/" + id;
+    }
+
+    /**
+     * Assign ticket to a staff member.
+     */
+    @PostMapping("/tickets/{id}/assign")
+    public String assignTicket(@PathVariable Long id,
+                               @RequestParam Long staffId,
+                               RedirectAttributes redirectAttributes) {
+        logger.info("Assigning ticket {} to staff {}", id, staffId);
+        try {
+            ticketService.assignTicket(id, staffId);
+            redirectAttributes.addFlashAttribute("successMessage", "Ticket assigned successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", e.getMessage());
+        }
+        return "redirect:/admin/tickets/" + id;
     }
 
     /**

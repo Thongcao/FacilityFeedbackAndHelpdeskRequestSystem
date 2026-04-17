@@ -48,12 +48,10 @@ public class Ticket {
     @Column(nullable = false, length = 20)
     private String status;
 
-    /**
-     * Timestamp when ticket was created.
-     * Automatically set by service layer.
-     */
     @Column(nullable = false)
     private LocalDateTime createdAt;
+
+    private LocalDateTime updatedAt;
 
     /**
      * User who created the ticket.
@@ -61,6 +59,13 @@ public class Ticket {
     @ManyToOne
     @JoinColumn(name = "created_by_id", nullable = false)
     private User createdBy;
+
+    /**
+     * Staff/Admin assigned to handle this ticket.
+     */
+    @ManyToOne
+    @JoinColumn(name = "assigned_to_id")
+    private User assignedTo;
 
     /**
      * Department associated with the ticket.
@@ -83,4 +88,3 @@ public class Ticket {
     @JoinColumn(name = "category_id")
     private FeedbackCategory category;
 }
-

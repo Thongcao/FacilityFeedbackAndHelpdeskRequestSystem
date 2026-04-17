@@ -3,222 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket Detail - Admin Dashboard</title>
+    <title th:text="'Ticket #' + ${ticket.id} + ' - Admin'">Ticket Detail</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; color: #333; }
+        .header { background-color: #F37021; color: white; padding: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header-brand { font-size: 32px; font-weight: 700; }
+        .header h1 { font-size: 18px; font-weight: 500; opacity: 0.95; }
+        .container { max-width: 1000px; margin: 30px auto; padding: 0 20px; }
+        .card { background: white; padding: 28px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.08); margin-bottom: 24px; }
+        .card h2 { color: #F37021; font-size: 22px; margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 12px; }
+        .detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+        .detail-item { padding: 12px; background: #fafafa; border-radius: 6px; }
+        .detail-label { font-size: 12px; font-weight: 600; color: #888; text-transform: uppercase; margin-bottom: 4px; }
+        .detail-value { font-size: 15px; color: #333; }
+        .full-width { grid-column: 1 / -1; }
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; text-transform: uppercase; }
+        .status-CREATED { background: #e3f2fd; color: #1976d2; } .status-ASSIGNED { background: #fff3e0; color: #f57c00; }
+        .status-IN_PROGRESS { background: #fff9c4; color: #f9a825; } .status-RESOLVED { background: #e8f5e9; color: #388e3c; }
+        .status-CLOSED { background: #f3e5f5; color: #7b1fa2; } .status-OVERDUE { background: #ffebee; color: #c62828; }
+        .priority-LOW { background: #e8f5e9; color: #2e7d32; } .priority-MEDIUM { background: #fff3e0; color: #f57c00; }
+        .priority-HIGH { background: #ffebee; color: #c62828; } .priority-URGENT { background: #fce4ec; color: #c2185b; }
+        .btn { padding: 8px 18px; background: #F37021; color: white; border: none; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #d45f1a; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .btn-secondary { background: #666; } .btn-secondary:hover { background: #555; }
+        .btn-ai { background: linear-gradient(135deg, #667eea, #764ba2); } .btn-ai:hover { background: linear-gradient(135deg, #5a6fd6, #6a4296); }
+        .btn-outline { background: transparent; border: 1px solid white; color: white; } .btn-outline:hover { background: rgba(255,255,255,0.2); }
+        .alert { padding: 12px 16px; border-radius: 6px; margin-bottom: 16px; font-size: 14px; }
+        .alert-success { background: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .alert-error { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        .actions-bar { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; margin-bottom: 20px; }
+        select, textarea, input[type="text"] { padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; }
+        select:focus, textarea:focus { outline: none; border-color: #F37021; }
+        textarea { width: 100%; min-height: 80px; resize: vertical; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-        }
+        /* Comments */
+        .comment { padding: 14px; margin-bottom: 12px; border: 1px solid #eee; border-radius: 8px; background: #fafafa; }
+        .comment-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .comment-author { font-weight: 600; font-size: 14px; color: #333; }
+        .comment-time { font-size: 12px; color: #999; }
+        .comment-body { font-size: 14px; line-height: 1.6; color: #444; white-space: pre-wrap; }
+        .comment-ai { border-left: 3px solid #764ba2; background: #f8f4ff; }
+        .ai-badge { font-size: 10px; background: linear-gradient(135deg, #667eea, #764ba2); color: white; padding: 2px 8px; border-radius: 10px; margin-left: 8px; }
+        .role-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; margin-left: 6px; }
+        .role-ADMIN { background: #ffebee; color: #c62828; } .role-STAFF { background: #e3f2fd; color: #1565c0; } .role-STUDENT { background: #e8f5e9; color: #2e7d32; }
 
-        .header {
-            background-color: #F37021;
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-brand {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
-        }
-
-        .header h1 {
-            font-size: 18px;
-            font-weight: 500;
-            opacity: 0.95;
-        }
-
-        .header form {
-            display: inline;
-        }
-
-        .header button {
-            background: transparent;
-            border: 1px solid white;
-            color: white;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .header button:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-        }
-
-        .card h2 {
-            color: #F37021;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .detail-row {
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .detail-row:last-child {
-            border-bottom: none;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: #666;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-
-        .detail-value {
-            color: #333;
-            font-size: 16px;
-        }
-
-        .status-badge, .priority-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-        }
-
-        .status-CREATED { background-color: #e3f2fd; color: #1976d2; }
-        .status-ASSIGNED { background-color: #fff3e0; color: #f57c00; }
-        .status-IN_PROGRESS { background-color: #fff9c4; color: #f9a825; }
-        .status-RESOLVED { background-color: #e8f5e9; color: #388e3c; }
-        .status-CLOSED { background-color: #f3e5f5; color: #7b1fa2; }
-        .status-OVERDUE { background-color: #ffebee; color: #c62828; }
-
-        .priority-LOW { background-color: #e8f5e9; color: #2e7d32; }
-        .priority-MEDIUM { background-color: #fff3e0; color: #f57c00; }
-        .priority-HIGH { background-color: #ffebee; color: #c62828; }
-        .priority-URGENT { background-color: #fce4ec; color: #c2185b; }
-
-        .status-update {
-            background-color: #f8f9fa;
-            padding: 20px;
-            border-radius: 8px;
-            margin-top: 20px;
-        }
-
-        .status-update h3 {
-            color: #F37021;
-            margin-bottom: 15px;
-            font-size: 18px;
-        }
-
-        .status-update form {
-            display: flex;
-            gap: 10px;
-            align-items: flex-end;
-        }
-
-        .form-group {
-            flex: 1;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-            font-size: 14px;
-        }
-
-        .form-group select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-        }
-
-        .btn {
-            padding: 10px 20px;
-            background-color: #F37021;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn:hover {
-            background-color: #d45f1a;
-        }
-
-        .btn-secondary {
-            background-color: #666;
-        }
-
-        .btn-secondary:hover {
-            background-color: #555;
-        }
-
-        .alert {
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .alert-error {
-            background-color: #fee;
-            color: #c33;
-        }
-
-        .back-link {
-            margin-bottom: 20px;
-        }
-
-        .back-link a {
-            color: #F37021;
-            text-decoration: none;
-        }
-
-        .back-link a:hover {
-            text-decoration: underline;
-        }
+        .ai-loading { display: none; align-items: center; gap: 8px; padding: 12px; background: #f8f4ff; border-radius: 6px; margin-bottom: 12px; font-size: 14px; color: #764ba2; }
+        .spinner { width: 18px; height: 18px; border: 2px solid #ddd; border-top: 2px solid #764ba2; border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -226,99 +60,158 @@
         <div class="header-content">
             <div>
                 <div class="header-brand">FPT University</div>
-                <h1>Ticket Detail</h1>
+                <h1>Admin Panel - Ticket Management</h1>
             </div>
-            <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit">Logout</button>
-            </form>
-        </div>
-    </div>
-
-    <div class="container">
-        <div class="back-link">
-            <a th:href="@{/admin/tickets}">← Back to Ticket List</a>
-        </div>
-
-        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
-
-        <div class="card">
-            <h2>Ticket Information</h2>
-
-            <div class="detail-row">
-                <div class="detail-label">Ticket ID</div>
-                <div class="detail-value" th:text="${ticket.id}">ID</div>
-            </div>
-
-            <div class="detail-row">
-                <div class="detail-label">Subject</div>
-                <div class="detail-value" th:text="${ticket.subject}">Subject</div>
-            </div>
-
-            <div class="detail-row">
-                <div class="detail-label">Description</div>
-                <div class="detail-value" th:text="${ticket.description}">Description</div>
-            </div>
-
-            <div class="detail-row">
-                <div class="detail-label">Status</div>
-                <div class="detail-value">
-                    <span th:classappend="'status-' + ${ticket.status}" 
-                          class="status-badge" 
-                          th:text="${ticket.status}">Status</span>
-                </div>
-            </div>
-
-            <div class="detail-row">
-                <div class="detail-label">Priority</div>
-                <div class="detail-value">
-                    <span th:classappend="'priority-' + ${ticket.priority}" 
-                          class="priority-badge" 
-                          th:text="${ticket.priority}">Priority</span>
-                </div>
-            </div>
-
-            <div class="detail-row" th:if="${ticket.category != null}">
-                <div class="detail-label">Category</div>
-                <div class="detail-value" th:text="${ticket.category.name}">Category</div>
-            </div>
-
-            <div class="detail-row" th:if="${ticket.department != null}">
-                <div class="detail-label">Department</div>
-                <div class="detail-value" th:text="${ticket.department.name}">Department</div>
-            </div>
-
-            <div class="detail-row" th:if="${ticket.createdBy != null}">
-                <div class="detail-label">Created By</div>
-                <div class="detail-value" th:text="${ticket.createdBy.fullName + ' (' + ticket.createdBy.email + ')'}">Created By</div>
-            </div>
-
-            <div class="detail-row" th:if="${ticket.createdAt != null}">
-                <div class="detail-label">Created At</div>
-                <div class="detail-value" th:text="${#temporals.format(ticket.createdAt, 'yyyy-MM-dd HH:mm:ss')}">Created At</div>
-            </div>
-
-            <div class="status-update">
-                <h3>Update Status</h3>
-                <form th:action="@{/admin/tickets/{id}/status(id=${ticket.id})}" method="post">
-                    <div class="form-group">
-                        <label for="status">New Status</label>
-                        <select id="status" name="status" required>
-                            <option value="CREATED" th:selected="${ticket.status == 'CREATED'}">CREATED</option>
-                            <option value="ASSIGNED" th:selected="${ticket.status == 'ASSIGNED'}">ASSIGNED</option>
-                            <option value="IN_PROGRESS" th:selected="${ticket.status == 'IN_PROGRESS'}">IN_PROGRESS</option>
-                            <option value="RESOLVED" th:selected="${ticket.status == 'RESOLVED'}">RESOLVED</option>
-                            <option value="CLOSED" th:selected="${ticket.status == 'CLOSED'}">CLOSED</option>
-                            <option value="OVERDUE" th:selected="${ticket.status == 'OVERDUE'}">OVERDUE</option>
-                        </select>
-                    </div>
-                    <button type="submit" class="btn">Update Status</button>
+            <div style="display:flex;gap:10px;align-items:center;">
+                <a th:href="@{/admin/tickets}" class="btn btn-outline btn-sm">← Back to List</a>
+                <form th:action="@{/logout}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-outline btn-sm">Logout</button>
                 </form>
             </div>
         </div>
     </div>
+
+    <div class="container">
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <!-- Ticket Info -->
+        <div class="card">
+            <h2 th:text="'Ticket #' + ${ticket.id} + ' - ' + ${ticket.subject}">Ticket</h2>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value"><span class="badge" th:classappend="'status-' + ${ticket.status}" th:text="${ticket.status}">Status</span></div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Priority</div>
+                    <div class="detail-value"><span class="badge" th:classappend="'priority-' + ${ticket.priority}" th:text="${ticket.priority}">Priority</span></div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Category</div>
+                    <div class="detail-value" th:text="${ticket.category != null ? ticket.category.name : 'N/A'}">Category</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Department</div>
+                    <div class="detail-value" th:text="${ticket.department != null ? ticket.department.name : 'N/A'}">Dept</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Created By</div>
+                    <div class="detail-value" th:text="${ticket.createdBy.fullName + ' (' + ticket.createdBy.email + ')'}">User</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Created At</div>
+                    <div class="detail-value" th:text="${#temporals.format(ticket.createdAt, 'dd/MM/yyyy HH:mm')}">Date</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Assigned To</div>
+                    <div class="detail-value" th:text="${ticket.assignedTo != null ? ticket.assignedTo.fullName : 'Unassigned'}">Staff</div>
+                </div>
+                <div class="detail-item full-width">
+                    <div class="detail-label">Description</div>
+                    <div class="detail-value" style="white-space:pre-wrap;" th:text="${ticket.description}">Description</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions: Status + Assign -->
+        <div class="card">
+            <h2>Actions</h2>
+            <div class="actions-bar">
+                <!-- Update Status -->
+                <form th:action="@{/admin/tickets/{id}/status(id=${ticket.id})}" method="post" style="display:flex;gap:8px;align-items:center;">
+                    <label style="font-weight:600;font-size:14px;">Status:</label>
+                    <select name="status">
+                        <option value="CREATED" th:selected="${ticket.status == 'CREATED'}">Created</option>
+                        <option value="ASSIGNED" th:selected="${ticket.status == 'ASSIGNED'}">Assigned</option>
+                        <option value="IN_PROGRESS" th:selected="${ticket.status == 'IN_PROGRESS'}">In Progress</option>
+                        <option value="RESOLVED" th:selected="${ticket.status == 'RESOLVED'}">Resolved</option>
+                        <option value="CLOSED" th:selected="${ticket.status == 'CLOSED'}">Closed</option>
+                        <option value="OVERDUE" th:selected="${ticket.status == 'OVERDUE'}">Overdue</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm">Update</button>
+                </form>
+
+                <!-- Assign -->
+                <form th:action="@{/admin/tickets/{id}/assign(id=${ticket.id})}" method="post" style="display:flex;gap:8px;align-items:center;">
+                    <label style="font-weight:600;font-size:14px;">Assign to:</label>
+                    <select name="staffId">
+                        <option value="">-- Select Staff --</option>
+                        <option th:each="s : ${staffList}" th:value="${s.id}"
+                                th:text="${s.fullName + ' (' + s.role + ')'}"
+                                th:selected="${ticket.assignedTo != null && ticket.assignedTo.id == s.id}">Staff</option>
+                    </select>
+                    <button type="submit" class="btn btn-sm">Assign</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- Comments Section -->
+        <div class="card">
+            <h2>Conversation <span th:text="'(' + ${comments.size()} + ')'" style="font-size:16px;color:#999;"></span></h2>
+
+            <!-- Existing comments -->
+            <div th:if="${comments.isEmpty()}" style="color:#999;padding:20px;text-align:center;">No comments yet. Start the conversation below.</div>
+            <div th:each="c : ${comments}" class="comment" th:classappend="${c.aiGenerated ? 'comment-ai' : ''}">
+                <div class="comment-header">
+                    <div>
+                        <span class="comment-author" th:text="${c.author.fullName}">User</span>
+                        <span class="role-badge" th:classappend="'role-' + ${c.author.role}" th:text="${c.author.role}">ROLE</span>
+                        <span th:if="${c.aiGenerated}" class="ai-badge">🤖 AI Generated</span>
+                    </div>
+                    <span class="comment-time" th:text="${#temporals.format(c.createdAt, 'dd/MM/yyyy HH:mm')}">Time</span>
+                </div>
+                <div class="comment-body" th:text="${c.content}">Comment text</div>
+            </div>
+
+            <!-- AI Suggest Reply -->
+            <div th:if="${aiAvailable}" style="margin-bottom:16px;">
+                <button type="button" class="btn btn-ai btn-sm" onclick="suggestReply()">🤖 AI Suggest Reply</button>
+                <div id="aiLoading" class="ai-loading"><div class="spinner"></div>AI is thinking...</div>
+            </div>
+
+            <!-- Add Comment Form -->
+            <form th:action="@{/admin/tickets/{id}/comment(id=${ticket.id})}" method="post">
+                <div style="margin-bottom:12px;">
+                    <textarea id="commentContent" name="content" placeholder="Write your reply here..." required></textarea>
+                </div>
+                <button type="submit" class="btn">💬 Post Reply</button>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function suggestReply() {
+            const ticket = /*[[${ticket}]]*/ {};
+            const loading = document.getElementById('aiLoading');
+            const textarea = document.getElementById('commentContent');
+
+            loading.style.display = 'flex';
+
+            fetch('/api/ai/suggest-reply', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    subject: ticket.subject || '',
+                    description: ticket.description || '',
+                    status: ticket.status || 'CREATED'
+                })
+            })
+            .then(r => r.json())
+            .then(data => {
+                loading.style.display = 'none';
+                if (data.available && data.reply) {
+                    textarea.value = data.reply;
+                    textarea.focus();
+                } else {
+                    alert('AI could not generate a suggestion. Please write manually.');
+                }
+            })
+            .catch(err => {
+                loading.style.display = 'none';
+                alert('Error: ' + err.message);
+            });
+        }
+    </script>
 </body>
 </html>
-
-
-

@@ -1,7 +1,9 @@
 package com.example.helpdesk.service;
 
 import com.example.helpdesk.entity.Ticket;
+import com.example.helpdesk.entity.User;
 import com.example.helpdesk.repository.TicketRepository;
+import com.example.helpdesk.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -24,9 +26,11 @@ public class TicketServiceImpl implements TicketService {
     private static final String DEFAULT_PRIORITY = "MEDIUM";
 
     private final TicketRepository ticketRepository;
+    private final UserRepository userRepository;
 
-    public TicketServiceImpl(TicketRepository ticketRepository) {
+    public TicketServiceImpl(TicketRepository ticketRepository, UserRepository userRepository) {
         this.ticketRepository = ticketRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -189,9 +193,44 @@ public class TicketServiceImpl implements TicketService {
         );
 
         if (!validStatuses.contains(status.toUpperCase())) {
-            throw new IllegalArgumentException("Invalid status: " + status + 
+            throw new IllegalArgumentException("Invalid status: " + status +
                     ". Valid statuses are: " + validStatuses);
         }
+    }
+
+    @Override
+    public List<Ticket> getTicketsByUser(Long userId) {
+        logger.info("Retrieving tickets for user ID: {}", userId);
+        return ticketRepository.findByCreatedById(userId);
+    }
+
+    @Override
+    public List<Ticket> getTicketsByUserAndStatus(Long userId, String status) {
+        logger.info("Retrieving tickets for user ID: {} with status: {}", userId, status);
+        validateStatus(status);
+        return ticketRepository.findByCreatedByIdAndStatus(userId, status);
+    }
+
+    @Override
+    @Transactional
+    public Ticket assignTicket(Long ticketId, Long staffId) {
+        logger.info("Assigning ticket {} to staff {}", ticketId, staffId);
+
+        Ticket ticket = getTicketById(ticketId);
+        User staff = userRepository.findById(staffId)
+                .orElseThrow(() -> new IllegalArgumentException("Staff not found: " + staffId));
+
+        if (!"STAFF".equals(staff.getRole()) && !"ADMIN".equals(staff.getRole())) {
+            throw new IllegalArgumentException("Can only assign tickets to STAFF or ADMIN users");
+        }
+
+        ticket.setAssignedTo(staff);
+        ticket.setStatus("ASSIGNED");
+        ticket.setUpdatedAt(java.time.LocalDateTime.now());
+
+        Ticket updated = ticketRepository.save(ticket);
+        logger.info("Ticket {} assigned to {} ({})", ticketId, staff.getFullName(), staff.getEmail());
+        return updated;
     }
 }
 

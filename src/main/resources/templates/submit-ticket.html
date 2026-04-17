@@ -5,160 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Submit Ticket - Facility Helpdesk System</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; color: #333; }
+        .header { background-color: #F37021; color: white; padding: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header-brand { font-size: 32px; font-weight: 700; margin-bottom: 4px; }
+        .header h1 { font-size: 18px; font-weight: 500; opacity: 0.95; }
+        .container { max-width: 800px; margin: 40px auto; padding: 0 20px; }
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .card h2 { color: #F37021; margin-bottom: 20px; font-size: 24px; }
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: #333; font-weight: 500; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 14px; font-family: inherit; transition: border-color 0.3s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { outline: none; border-color: #F37021; }
+        .form-group textarea { min-height: 120px; resize: vertical; }
+        .error-message { color: #c33; font-size: 12px; margin-top: 4px; }
+        .btn { padding: 12px 24px; background: #F37021; color: white; border: none; border-radius: 4px; font-size: 16px; font-weight: 600; cursor: pointer; transition: background 0.3s; text-decoration: none; display: inline-block; }
+        .btn:hover { background: #d45f1a; }
+        .btn-secondary { background: #666; margin-left: 10px; } .btn-secondary:hover { background: #555; }
+        .btn-ai { background: linear-gradient(135deg, #667eea, #764ba2); font-size: 13px; padding: 8px 16px; }
+        .btn-ai:hover { background: linear-gradient(135deg, #5a6fd6, #6a4296); }
+        .btn-outline { background: transparent; border: 1px solid white; color: white; padding: 8px 16px; font-size: 14px; }
+        .btn-outline:hover { background: rgba(255,255,255,0.2); }
+        .alert { padding: 12px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; }
+        .alert-success { background: #e8f5e9; color: #2e7d32; }
+        .alert-error { background: #ffebee; color: #c62828; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-        }
-
-        .header {
-            background-color: #F37021;
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .header-brand {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
-        }
-
-        .header h1 {
-            font-size: 18px;
-            font-weight: 500;
-            opacity: 0.95;
-        }
-
-        .header a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border: 1px solid white;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .header a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h2 {
-            color: #F37021;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 8px;
-            color: #333;
-            font-weight: 500;
-        }
-
-        .form-group input,
-        .form-group select,
-        .form-group textarea {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            font-family: inherit;
-            transition: border-color 0.3s;
-        }
-
-        .form-group input:focus,
-        .form-group select:focus,
-        .form-group textarea:focus {
-            outline: none;
-            border-color: #F37021;
-        }
-
-        .form-group textarea {
-            min-height: 120px;
-            resize: vertical;
-        }
-
-        .error-message {
-            color: #c33;
-            font-size: 12px;
-            margin-top: 4px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            background-color: #F37021;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-
-        .btn:hover {
-            background-color: #d45f1a;
-        }
-
-        .btn-secondary {
-            background-color: #666;
-            margin-left: 10px;
-        }
-
-        .btn-secondary:hover {
-            background-color: #555;
-        }
-
-        .alert {
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .alert-error {
-            background-color: #fee;
-            color: #c33;
-        }
+        .ai-suggestion { display: none; padding: 10px 14px; background: #f8f4ff; border: 1px solid #e0d4f5; border-radius: 6px; margin-top: 8px; font-size: 13px; color: #5a3e8e; }
+        .ai-suggestion .ai-label { font-weight: 600; color: #764ba2; }
+        .ai-suggestion button { background: #764ba2; color: white; border: none; padding: 4px 12px; border-radius: 4px; font-size: 12px; cursor: pointer; margin-left: 8px; }
+        .ai-suggestion button:hover { background: #5a3e8e; }
+        .ai-loading { display: none; font-size: 13px; color: #764ba2; margin-top: 6px; }
+        .spinner-inline { display: inline-block; width: 14px; height: 14px; border: 2px solid #ddd; border-top: 2px solid #764ba2; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 6px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
@@ -168,8 +47,8 @@
                 <div class="header-brand">FPT University</div>
                 <h1>Facility Helpdesk System</h1>
             </div>
-            <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" style="background: transparent; border: 1px solid white; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; transition: background-color 0.3s;">Logout</button>
+            <form th:action="@{/logout}" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-outline">Logout</button>
             </form>
         </div>
     </div>
@@ -184,55 +63,140 @@
             <form th:action="@{/tickets}" th:object="${ticket}" method="post">
                 <div class="form-group">
                     <label for="subject">Subject *</label>
-                    <input type="text" id="subject" th:field="*{subject}" required>
-                    <div th:if="${#fields.hasErrors('subject')}" class="error-message" 
-                         th:errors="*{subject}">Subject error</div>
+                    <input type="text" id="subject" th:field="*{subject}" required placeholder="Brief description of the issue">
+                    <div th:if="${#fields.hasErrors('subject')}" class="error-message" th:errors="*{subject}"></div>
                 </div>
 
                 <div class="form-group">
                     <label for="description">Description *</label>
-                    <textarea id="description" th:field="*{description}" required></textarea>
-                    <div th:if="${#fields.hasErrors('description')}" class="error-message" 
-                         th:errors="*{description}">Description error</div>
+                    <textarea id="description" th:field="*{description}" required placeholder="Describe the issue in detail..."></textarea>
+                    <div th:if="${#fields.hasErrors('description')}" class="error-message" th:errors="*{description}"></div>
+                    <!-- AI Suggest Button -->
+                    <div style="margin-top:8px;">
+                        <button type="button" class="btn-ai" onclick="getAiSuggestions()">🤖 AI Auto-Suggest Category & Priority</button>
+                    </div>
+                    <div id="aiLoading" class="ai-loading"><span class="spinner-inline"></span>AI is analyzing your ticket...</div>
                 </div>
 
                 <div class="form-group">
                     <label for="priority">Priority *</label>
                     <select id="priority" th:field="*{priority}" required>
                         <option value="LOW">Low</option>
-                        <option value="MEDIUM">Medium</option>
+                        <option value="MEDIUM" selected>Medium</option>
                         <option value="HIGH">High</option>
                         <option value="URGENT">Urgent</option>
                     </select>
+                    <div id="aiPrioritySuggestion" class="ai-suggestion">
+                        <span class="ai-label">🤖 AI suggests:</span>
+                        <span id="aiPriorityValue"></span>
+                        <button type="button" onclick="applyPriority()">Apply</button>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="categoryId">Category</label>
                     <select id="categoryId" name="categoryId">
                         <option value="">-- Select Category --</option>
-                        <option th:each="cat : ${categories}" 
-                                th:value="${cat.id}" 
-                                th:text="${cat.name}">Category</option>
+                        <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}">Category</option>
                     </select>
+                    <div id="aiCategorySuggestion" class="ai-suggestion">
+                        <span class="ai-label">🤖 AI suggests:</span>
+                        <span id="aiCategoryValue"></span>
+                        <button type="button" onclick="applyCategory()">Apply</button>
+                    </div>
                 </div>
 
                 <div class="form-group">
                     <label for="departmentId">Department</label>
                     <select id="departmentId" name="departmentId">
                         <option value="">-- Select Department --</option>
-                        <option th:each="dept : ${departments}" 
-                                th:value="${dept.id}" 
-                                th:text="${dept.name}">Department</option>
+                        <option th:each="dept : ${departments}" th:value="${dept.id}" th:text="${dept.name}">Department</option>
                     </select>
                 </div>
 
                 <div class="form-group">
                     <button type="submit" class="btn">Submit Ticket</button>
-                    <a th:href="@{/tickets}" class="btn btn-secondary" style="text-decoration: none; display: inline-block;">Cancel</a>
+                    <a th:href="@{/tickets}" class="btn btn-secondary">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
+
+    <script>
+        let suggestedPriority = '';
+        let suggestedCategory = '';
+
+        function getAiSuggestions() {
+            const subject = document.getElementById('subject').value;
+            const description = document.getElementById('description').value;
+
+            if (!subject && !description) {
+                alert('Please enter a subject or description first.');
+                return;
+            }
+
+            const loading = document.getElementById('aiLoading');
+            loading.style.display = 'block';
+
+            // Fetch category suggestion
+            fetch('/api/ai/suggest-category', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subject, description })
+            })
+            .then(r => r.json())
+            .then(data => {
+                if (data.available && data.category) {
+                    suggestedCategory = data.category;
+                    document.getElementById('aiCategoryValue').textContent = data.category;
+                    document.getElementById('aiCategorySuggestion').style.display = 'block';
+                }
+            })
+            .catch(err => console.error('Category suggestion error:', err));
+
+            // Fetch priority suggestion
+            fetch('/api/ai/suggest-priority', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ subject, description })
+            })
+            .then(r => r.json())
+            .then(data => {
+                loading.style.display = 'none';
+                if (data.available && data.priority) {
+                    suggestedPriority = data.priority;
+                    document.getElementById('aiPriorityValue').textContent = data.priority;
+                    document.getElementById('aiPrioritySuggestion').style.display = 'block';
+                }
+            })
+            .catch(err => {
+                loading.style.display = 'none';
+                console.error('Priority suggestion error:', err);
+            });
+        }
+
+        function applyPriority() {
+            if (suggestedPriority) {
+                document.getElementById('priority').value = suggestedPriority;
+                document.getElementById('aiPrioritySuggestion').style.display = 'none';
+            }
+        }
+
+        function applyCategory() {
+            if (suggestedCategory) {
+                const select = document.getElementById('categoryId');
+                for (let i = 0; i < select.options.length; i++) {
+                    if (select.options[i].text.toLowerCase().includes(suggestedCategory.toLowerCase())) {
+                        select.selectedIndex = i;
+                        document.getElementById('aiCategorySuggestion').style.display = 'none';
+                        return;
+                    }
+                }
+                // If no exact match, just hide the suggestion
+                document.getElementById('aiCategorySuggestion').style.display = 'none';
+                alert('Category "' + suggestedCategory + '" not found in dropdown. Please select manually.');
+            }
+        }
+    </script>
 </body>
 </html>
-

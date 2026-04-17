@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationFailureHandler;
@@ -22,24 +22,16 @@ public class SecurityConfig {
 
     /**
      * Configure security filter chain with session-based authentication.
-     * 
-     * @param http the HttpSecurity to configure
-     * @return the configured SecurityFilterChain
-     * @throws Exception if configuration fails
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
             .authorizeHttpRequests(authorize -> authorize
-                // Allow access to login pages, root path, and static resources
                 .requestMatchers("/", "/login", "/admin/login", "/css/**", "/js/**", "/images/**").permitAll()
-                // Admin-only routes - only ADMIN can access
+                .requestMatchers("/api/**").authenticated()
                 .requestMatchers("/admin/users/**").hasRole("ADMIN")
-                // Admin and Staff routes - both ADMIN and STAFF can access
                 .requestMatchers("/admin/**").hasAnyRole("ADMIN", "STAFF")
-                // User routes - only STUDENT can access
                 .requestMatchers("/tickets/**").hasRole("STUDENT")
-                // Require authentication for all other requests
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
@@ -63,14 +55,15 @@ public class SecurityConfig {
                 .maxSessionsPreventsLogin(false)
                 .expiredUrl("/login?expired")
             )
-            .csrf(csrf -> csrf.disable()); // Disable CSRF for development (enable in production)
+            .csrf(csrf -> csrf
+                .ignoringRequestMatchers("/api/**")
+            );
 
         return http.build();
     }
 
     /**
      * Custom authentication success handler bean.
-     * Uses CustomAuthenticationSuccessHandler component.
      */
     @Bean
     public CustomAuthenticationSuccessHandler customAuthenticationSuccessHandler() {
@@ -78,15 +71,10 @@ public class SecurityConfig {
     }
 
     /**
-     * Password encoder bean for encoding and verifying passwords.
-     * Using NoOpPasswordEncoder for development (no encryption).
-     * WARNING: This is NOT secure for production! Use BCryptPasswordEncoder in production.
-     * 
-     * @return NoOpPasswordEncoder instance (no encryption)
+     * Password encoder using BCrypt (production-grade).
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return NoOpPasswordEncoder.getInstance();
+        return new BCryptPasswordEncoder();
     }
 }
-

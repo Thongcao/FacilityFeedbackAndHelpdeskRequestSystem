@@ -3,119 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket List - Facility Helpdesk System</title>
+    <title>My Tickets - Facility Helpdesk System</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f5f5; color: #333; }
+        .header { background-color: #F37021; color: white; padding: 20px 0; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .header-content { max-width: 1200px; margin: 0 auto; padding: 0 20px; display: flex; justify-content: space-between; align-items: center; }
+        .header-brand { font-size: 32px; font-weight: 700; margin-bottom: 4px; letter-spacing: 0.5px; }
+        .header h1 { font-size: 18px; font-weight: 500; opacity: 0.95; }
+        .header-actions { display: flex; align-items: center; gap: 12px; }
+        .header-actions span { font-size: 14px; opacity: 0.9; }
+        .container { max-width: 1200px; margin: 40px auto; padding: 0 20px; }
+        .card { background-color: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .card h2 { color: #F37021; font-size: 24px; }
+        .btn { padding: 10px 20px; background-color: #F37021; color: white; border: none; border-radius: 4px; font-size: 14px; font-weight: 600; cursor: pointer; transition: background-color 0.3s; text-decoration: none; display: inline-block; }
+        .btn:hover { background-color: #d45f1a; }
+        .btn-sm { padding: 6px 12px; font-size: 12px; }
+        .btn-outline { background: transparent; border: 1px solid white; color: white; }
+        .btn-outline:hover { background-color: rgba(255,255,255,0.2); }
+        .alert { padding: 12px 16px; border-radius: 4px; margin-bottom: 20px; font-size: 14px; }
+        .alert-success { background-color: #e8f5e9; color: #2e7d32; border: 1px solid #c8e6c9; }
+        .alert-error { background-color: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f5f5;
-            color: #333;
-        }
+        /* Filter bar */
+        .filter-bar { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-btn { padding: 6px 14px; border: 1px solid #ddd; background: white; border-radius: 20px; font-size: 13px; cursor: pointer; text-decoration: none; color: #555; transition: all 0.2s; }
+        .filter-btn:hover, .filter-btn.active { background-color: #F37021; color: white; border-color: #F37021; }
 
-        .header {
-            background-color: #F37021;
-            color: white;
-            padding: 20px 0;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
+        /* Table */
+        .ticket-table { width: 100%; border-collapse: collapse; }
+        .ticket-table th { text-align: left; padding: 12px; color: #666; font-size: 13px; font-weight: 600; text-transform: uppercase; border-bottom: 2px solid #eee; }
+        .ticket-table td { padding: 12px; font-size: 14px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+        .ticket-table tr:hover { background-color: #fafafa; }
+        .ticket-table a { color: #F37021; text-decoration: none; font-weight: 500; }
+        .ticket-table a:hover { text-decoration: underline; }
 
-        .header-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
+        /* Badges */
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .status-CREATED { background-color: #e3f2fd; color: #1976d2; }
+        .status-ASSIGNED { background-color: #fff3e0; color: #f57c00; }
+        .status-IN_PROGRESS { background-color: #fff9c4; color: #f9a825; }
+        .status-RESOLVED { background-color: #e8f5e9; color: #388e3c; }
+        .status-CLOSED { background-color: #f3e5f5; color: #7b1fa2; }
+        .status-OVERDUE { background-color: #ffebee; color: #c62828; }
+        .priority-LOW { background-color: #e8f5e9; color: #2e7d32; }
+        .priority-MEDIUM { background-color: #fff3e0; color: #f57c00; }
+        .priority-HIGH { background-color: #ffebee; color: #c62828; }
+        .priority-URGENT { background-color: #fce4ec; color: #c2185b; }
 
-        .header-brand {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
-        }
+        .empty-state { text-align: center; padding: 60px 20px; color: #888; }
+        .empty-state p { margin-bottom: 20px; font-size: 16px; }
 
-        .header h1 {
-            font-size: 18px;
-            font-weight: 500;
-            opacity: 0.95;
-        }
-
-        .header a {
-            color: white;
-            text-decoration: none;
-            padding: 8px 16px;
-            border: 1px solid white;
-            border-radius: 4px;
-            transition: background-color 0.3s;
-        }
-
-        .header a:hover {
-            background-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 40px auto;
-            padding: 0 20px;
-        }
-
-        .card {
-            background-color: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .card h2 {
-            color: #F37021;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-
-        .btn {
-            padding: 12px 24px;
-            background-color: #F37021;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn:hover {
-            background-color: #d45f1a;
-        }
-
-        .alert {
-            padding: 12px;
-            border-radius: 4px;
-            margin-bottom: 20px;
-        }
-
-        .alert-success {
-            background-color: #e8f5e9;
-            color: #2e7d32;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 40px;
-            color: #666;
-        }
-
-        .empty-state p {
-            margin-bottom: 20px;
-        }
+        .stats-bar { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+        .stat-item { background: linear-gradient(135deg, #F37021, #ff8c42); color: white; padding: 16px 24px; border-radius: 8px; min-width: 120px; text-align: center; }
+        .stat-item .stat-number { font-size: 28px; font-weight: 700; }
+        .stat-item .stat-label { font-size: 12px; opacity: 0.9; margin-top: 4px; }
     </style>
 </head>
 <body>
@@ -125,27 +68,86 @@
                 <div class="header-brand">FPT University</div>
                 <h1>Facility Helpdesk System</h1>
             </div>
-            <form th:action="@{/logout}" method="post" style="display: inline;">
-                <button type="submit" style="background: transparent; border: 1px solid white; color: white; padding: 8px 16px; border-radius: 4px; cursor: pointer; font-size: 14px; transition: background-color 0.3s;">Logout</button>
-            </form>
+            <div class="header-actions">
+                <span th:text="'Welcome, ' + ${username}">Welcome, User</span>
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="btn btn-outline btn-sm">Logout</button>
+                </form>
+            </div>
         </div>
     </div>
 
     <div class="container">
+        <!-- Success/Error Messages -->
+        <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
+        <div th:if="${errorMessage}" class="alert alert-error" th:text="${errorMessage}"></div>
+
+        <!-- Stats Bar -->
+        <div class="stats-bar" th:if="${tickets != null}">
+            <div class="stat-item">
+                <div class="stat-number" th:text="${tickets.size()}">0</div>
+                <div class="stat-label">Total Tickets</div>
+            </div>
+        </div>
+
         <div class="card">
-            <h2>My Tickets</h2>
-
-            <div th:if="${successMessage}" class="alert alert-success" th:text="${successMessage}"></div>
-
-            <div style="margin-bottom: 20px;">
-                <a th:href="@{/tickets/new}" class="btn">Submit New Ticket</a>
+            <div class="card-header">
+                <h2>My Tickets</h2>
+                <a th:href="@{/tickets/new}" class="btn">+ Submit New Ticket</a>
             </div>
 
-            <div class="empty-state">
+            <!-- Filter Buttons -->
+            <div class="filter-bar">
+                <a th:href="@{/tickets}" class="filter-btn" th:classappend="${currentFilter == null} ? 'active' : ''">All</a>
+                <a th:href="@{/tickets(status='CREATED')}" class="filter-btn" th:classappend="${currentFilter == 'CREATED'} ? 'active' : ''">Created</a>
+                <a th:href="@{/tickets(status='ASSIGNED')}" class="filter-btn" th:classappend="${currentFilter == 'ASSIGNED'} ? 'active' : ''">Assigned</a>
+                <a th:href="@{/tickets(status='IN_PROGRESS')}" class="filter-btn" th:classappend="${currentFilter == 'IN_PROGRESS'} ? 'active' : ''">In Progress</a>
+                <a th:href="@{/tickets(status='RESOLVED')}" class="filter-btn" th:classappend="${currentFilter == 'RESOLVED'} ? 'active' : ''">Resolved</a>
+                <a th:href="@{/tickets(status='CLOSED')}" class="filter-btn" th:classappend="${currentFilter == 'CLOSED'} ? 'active' : ''">Closed</a>
+            </div>
+
+            <!-- Ticket Table -->
+            <div th:if="${tickets != null && !tickets.isEmpty()}">
+                <table class="ticket-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Subject</th>
+                            <th>Category</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Created</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="t : ${tickets}">
+                            <td th:text="${t.id}">#</td>
+                            <td>
+                                <a th:href="@{/tickets/{id}(id=${t.id})}" th:text="${t.subject}">Subject</a>
+                            </td>
+                            <td th:text="${t.category != null ? t.category.name : 'N/A'}">Category</td>
+                            <td>
+                                <span class="badge" th:classappend="'priority-' + ${t.priority}" th:text="${t.priority}">MEDIUM</span>
+                            </td>
+                            <td>
+                                <span class="badge" th:classappend="'status-' + ${t.status}" th:text="${t.status}">CREATED</span>
+                            </td>
+                            <td th:text="${#temporals.format(t.createdAt, 'dd/MM/yyyy HH:mm')}">01/01/2026</td>
+                            <td>
+                                <a th:href="@{/tickets/{id}(id=${t.id})}" class="btn btn-sm">View</a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div th:if="${tickets == null || tickets.isEmpty()}" class="empty-state">
                 <p>No tickets found. Click "Submit New Ticket" to create your first ticket.</p>
+                <a th:href="@{/tickets/new}" class="btn">Submit New Ticket</a>
             </div>
         </div>
     </div>
 </body>
 </html>
-

@@ -46,6 +46,11 @@ public interface TicketRepository extends JpaRepository<Ticket, Long> {
      * @return list of tickets in the category
      */
     List<Ticket> findByCategoryId(Long categoryId);
+
+    /**
+     * Find all tickets created by a specific user with a specific status.
+     */
+    List<Ticket> findByCreatedByIdAndStatus(Long userId, String status);
 }
 
 

@@ -55,5 +55,20 @@ public interface TicketService {
      * @return list of tickets with the given status
      */
     List<Ticket> getTicketsByStatus(String status);
+
+    /**
+     * Get tickets created by a specific user.
+     */
+    List<Ticket> getTicketsByUser(Long userId);
+
+    /**
+     * Get tickets created by a specific user with a given status.
+     */
+    List<Ticket> getTicketsByUserAndStatus(Long userId, String status);
+
+    /**
+     * Assign ticket to a staff member.
+     */
+    Ticket assignTicket(Long ticketId, Long staffId);
 }
 
